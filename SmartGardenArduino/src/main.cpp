@@ -1,38 +1,34 @@
 #include <Arduino.h>
 #include "ServoMotorImpl.h"
-int pinLed1 = 10;
-int pinLed2 = 11;
-int pinLed3 = 12;
-int pinLed4 = 13;
+#include "Scheduler.h"
+#include "MainTask.h"
+#include "IrrigationTask.h"
 #define SERVO_PIN 9
+int pinLed1 = 13;
+int pinLed2 = 12;
+int pinLed3 = 6;
+int pinLed4 = 5;
 ServoMotor* servo;
+Scheduler scheduler;
 int position = 0;
 
 
 void setup() {
-  pinMode(pinLed1, OUTPUT);
-  pinMode(pinLed2, OUTPUT);
-  pinMode(pinLed3, OUTPUT);
-  pinMode(pinLed4, OUTPUT);
+  Serial.begin(9600);
+  scheduler.init(100);
   servo = new ServoMotorImpl(SERVO_PIN);
+  MainTask* mainTask = new MainTask();
+  mainTask->init(100,pinLed1,pinLed2,pinLed3,pinLed4);
+  IrrigationTask* irrigationTask = new IrrigationTask();
+  irrigationTask->init(1000, servo);
+  irrigationTask->addMainTask(mainTask);
+  irrigationTask->setActive(false);
+  mainTask->addIrrigationTask(irrigationTask);
+  scheduler.addTask(mainTask);
+  scheduler.addTask(irrigationTask);
 }
 
 void loop() {
-  servo->on();
-  servo->setPosition(position);
-  digitalWrite(pinLed1, HIGH);
-  digitalWrite(pinLed2, HIGH);
-  digitalWrite(pinLed3, HIGH);
-  digitalWrite(pinLed4, HIGH);
-  delay(1000);
-  digitalWrite(pinLed1, LOW);
-  digitalWrite(pinLed2, LOW);
-  digitalWrite(pinLed3, LOW);
-  digitalWrite(pinLed4, LOW);
-  delay(1000);
-  if(position<180){
-    position=position+60;
-  }else{
-    position=0;
-  }
+  scheduler.schedule();
+  //get which task is active
 }

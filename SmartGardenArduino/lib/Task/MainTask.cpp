@@ -22,6 +22,7 @@ void MainTask::init(int period,int pinLed1,int pinLed2,int pinLed3,int pinLed4){
   pinMode(pinLed3, OUTPUT);
   pinMode(pinLed4, OUTPUT);
   this->brightness = 0;
+  this->temperature = 0;
   state = AUTO; 
 }
 
@@ -54,12 +55,14 @@ void MainTask::readData(){
             analogWrite(pinLed3, map(brightness,0,5,255,0));
             analogWrite(pinLed4, map(brightness,0,5,255,0));
             if(brightness<2){
+                temperature = rand() % 5;
                 if(!taskIrrigation->getIsAsleep()){
-                    Serial.println("irrigating");
-                    taskIrrigation->resetState();
+                    Serial.println("temp");
+                    Serial.println(temperature);
+                    Serial.println("speed");
+                    taskIrrigation->resetState(temperature);
                 }
             }
-            //map brightnees [0,4] to [255,0]
         }
         else{
             digitalWrite(pinLed1, LOW);

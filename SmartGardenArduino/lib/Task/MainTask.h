@@ -29,5 +29,6 @@ class MainTask: public Task {
     int pinLed3;
     int pinLed4;
     int brightness;
+    int temperature;
 };
 #endif

@@ -17,7 +17,7 @@ public:
   void init(int period, ServoMotor* servo); 
   void tick();
   void addMainTask(MainTask* mainTask);
-  void resetState();
+  void resetState(int temperature);
   void move();
   bool getIsAsleep();
   
@@ -26,6 +26,7 @@ private:
   CustomTimer timer;
   int position;
   bool isAsleep;
+  int speed;
 };
 
 #endif

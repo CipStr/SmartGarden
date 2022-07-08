@@ -17,6 +17,7 @@ void IrrigationTask::init(int period, ServoMotor* servo){
   this->servo->on();
   this->servo->setPosition(0);
   this->isAsleep = false;
+  this->speed = 0;
   state = IRRIGATING;    
 }
 
@@ -49,19 +50,20 @@ void IrrigationTask::tick(){
   }
 }
 
-void IrrigationTask::resetState(){
+void IrrigationTask::resetState(int temperature){
   this->setActive(true);
   position = 0;
   isAsleep = false;
   state = IRRIGATING;
   timer.startTimer();
+  speed=temperature*5;
 }
 
 void IrrigationTask::move(){
   //move servo until it reaches the end then make it go back to the beginning
   if(position<180){
     servo->setPosition(position);
-    position+=delta;
+    position+=delta+speed;
   }
   else{
     servo->setPosition(0);

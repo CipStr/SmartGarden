@@ -20,7 +20,7 @@ void setup() {
   MainTask* mainTask = new MainTask();
   mainTask->init(100,pinLed1,pinLed2,pinLed3,pinLed4);
   IrrigationTask* irrigationTask = new IrrigationTask();
-  irrigationTask->init(1000, servo);
+  irrigationTask->init(100, servo);
   irrigationTask->addMainTask(mainTask);
   irrigationTask->setActive(false);
   mainTask->addIrrigationTask(irrigationTask);

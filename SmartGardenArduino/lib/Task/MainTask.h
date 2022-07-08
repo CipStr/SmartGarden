@@ -20,6 +20,7 @@ class MainTask: public Task {
     void tick();
     void addIrrigationTask(IrrigationTask* irrigationtask);
     void readData();
+    void getTemperature();
 
   private:
     CustomTimer timer;

@@ -48,18 +48,19 @@ void MainTask::readData(){
     if(timer.checkExpired(3000)){
         //get random value between 0 and 8
         brightness = rand() % 9;
-        Serial.println(brightness);
+        //Serial.println(brightness);
         if(brightness<5){
             digitalWrite(pinLed1, HIGH);
             digitalWrite(pinLed2, HIGH);
             analogWrite(pinLed3, map(brightness,0,5,255,0));
             analogWrite(pinLed4, map(brightness,0,5,255,0));
             if(brightness<2){
-                temperature = rand() % 5;
+                //temperature = rand() % 5;
                 if(!taskIrrigation->getIsAsleep()){
-                    Serial.println("temp");
-                    Serial.println(temperature);
-                    Serial.println("speed");
+                    //Serial.println("temp");
+                    getTemperature();
+                   // Serial.println(temperature);
+                   // Serial.println("speed");
                     taskIrrigation->resetState(temperature);
                 }
             }
@@ -71,5 +72,18 @@ void MainTask::readData(){
             analogWrite(pinLed4, 0);
         }
         timer.startTimer();
+    } 
+}
+
+void MainTask::getTemperature(){
+    Serial.println(Serial.available());
+    if(Serial.available()){
+        Serial.println(Serial.read());
+        if (Serial.read() == '0'){
+            temperature=0;
+        }
+    }
+    else{
+        temperature=4;
     }
 }

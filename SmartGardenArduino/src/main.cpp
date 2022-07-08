@@ -30,5 +30,4 @@ void setup() {
 
 void loop() {
   scheduler.schedule();
-  //get which task is active
 }

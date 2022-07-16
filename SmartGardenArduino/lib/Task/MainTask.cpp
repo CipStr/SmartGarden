@@ -21,7 +21,7 @@ void MainTask::init(int period,int pinLed1,int pinLed2,int pinLed3,int pinLed4){
   pinMode(pinLed2, OUTPUT);
   pinMode(pinLed3, OUTPUT);
   pinMode(pinLed4, OUTPUT);
-  this->brightness = 0;
+  this->brightness = 8;
   this->temperature = 0;
   state = AUTO; 
 }
@@ -31,7 +31,6 @@ void MainTask::addIrrigationTask(IrrigationTask* irrigationtask){
 }
 
 void MainTask::tick(){
-    //Serial.println(state);
     switch(state){
         case AUTO:
             readData();
@@ -40,27 +39,31 @@ void MainTask::tick(){
 }
 
 void MainTask::readData(){
-    //if not started star timer
+    //if timer is not running, start it
     if(!timer.isStarted()){
         timer.startTimer();
     }
-    //if timer expired
-    if(timer.checkExpired(3000)){
+    if(Serial.available()>0 && timer.checkExpired(3000)){
         //get random value between 0 and 8
-        brightness = rand() % 9;
-        //Serial.println(brightness);
+        String msg = Serial.readString();
+        //find ',', split string and get temperature
+        int index = msg.indexOf(',');
+        String temp = msg.substring(0,index);
+        temperature = temp.toFloat();
+        //map temperature in a range between 0 and 4
+        temperature = map(temperature,0,40,0,4);
+        Serial.println(temperature);
+        int secondIndex = msg.indexOf(':');
+        String light = msg.substring(index+1,secondIndex);
+        Serial.println(light);
+        brightness = light.toInt();
         if(brightness<5){
             digitalWrite(pinLed1, HIGH);
             digitalWrite(pinLed2, HIGH);
             analogWrite(pinLed3, map(brightness,0,5,255,0));
             analogWrite(pinLed4, map(brightness,0,5,255,0));
-            if(brightness<2){
-                //temperature = rand() % 5;
+            if(brightness<=2){
                 if(!taskIrrigation->getIsAsleep()){
-                    //Serial.println("temp");
-                    getTemperature();
-                   // Serial.println(temperature);
-                   // Serial.println("speed");
                     taskIrrigation->resetState(temperature);
                 }
             }
@@ -73,17 +76,7 @@ void MainTask::readData(){
         }
         timer.startTimer();
     } 
-}
-
-void MainTask::getTemperature(){
-    Serial.println(Serial.available());
-    if(Serial.available()){
-        Serial.println(Serial.read());
-        if (Serial.read() == '0'){
-            temperature=0;
-        }
-    }
     else{
-        temperature=4;
+        Serial.read();
     }
 }

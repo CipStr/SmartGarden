@@ -26,7 +26,6 @@ void IrrigationTask::addMainTask(MainTask* mainTask){
 }
 
 void IrrigationTask::tick(){
-    //Serial.println(state);
     switch(state){
         case IRRIGATING:
           isAsleep = true;

@@ -21,6 +21,7 @@ class MainTask: public Task {
     void addIrrigationTask(IrrigationTask* irrigationtask);
     void readData();
     void getTemperature();
+    void goManuel();
 
   private:
     CustomTimer timer;

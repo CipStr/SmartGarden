@@ -67,7 +67,6 @@ void setup() {
 void loop() {
   int light = photoresistor->getValue();
   float temp = temperatureSensor->getTemperature();
-  temp=40;
   if(temp==40 && irrigationStatus==1){
     digitalWrite(pinLed, LOW);
   }

@@ -3,8 +3,15 @@
 #include <Arduino.h>
 #include <math.h>
 #include <ServoTimer2.h>
+#include "SoftwareSerial.h"
+/*
+ *  BT module connection:  
+ *  - pin 2 <=> TXD
+ *  - pin 3 <=> RXD
+ *
+ */ 
 #define delta 9
-
+SoftwareSerial btChannel(2, 3);
 IrrigationTask* taskIrrigation;
 
 MainTask::MainTask(){    
@@ -12,6 +19,7 @@ MainTask::MainTask(){
 }
 
 void MainTask::init(int period,int pinLed1,int pinLed2,int pinLed3,int pinLed4){
+  btChannel.begin(9600);
   Task::init(period);
   this->pinLed1 = pinLed1;
   this->pinLed2 = pinLed2;
@@ -23,6 +31,7 @@ void MainTask::init(int period,int pinLed1,int pinLed2,int pinLed3,int pinLed4){
   pinMode(pinLed4, OUTPUT);
   this->brightness = 8;
   this->temperature = 0;
+  //btChannel.print("AT+NAMEarduinoGarden"); // Set the name to arduinoGarden
   state = AUTO; 
 }
 
@@ -33,7 +42,17 @@ void MainTask::addIrrigationTask(IrrigationTask* irrigationtask){
 void MainTask::tick(){
     switch(state){
         case AUTO:
+            if(btChannel.available()){
+                 int c = btChannel.read();
+                 Serial.write(c);
+                 if(c == 77){
+                    goManuel();
+                 }
+            }
             readData();
+        break;
+        case MANUAL:
+            Serial.println("SOY MANUEL");
         break;
   }
 }
@@ -44,7 +63,6 @@ void MainTask::readData(){
         timer.startTimer();
     }
     if(Serial.available()>0 && timer.checkExpired(3000)){
-        //get random value between 0 and 8
         String msg = Serial.readString();
         //find ',', split string and get temperature
         int index = msg.indexOf(',');
@@ -79,4 +97,7 @@ void MainTask::readData(){
     else{
         Serial.read();
     }
+}
+void MainTask::goManuel(){
+    state = MANUAL;
 }

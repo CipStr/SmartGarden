@@ -37,11 +37,13 @@ void IrrigationTask::tick(){
             state=SLEEP;
             isAsleep=true;
             timer.startTimer();
+            Serial.println("irrigation:1");
           }
         break;
         case SLEEP:
             if(timer.checkExpired(10000)){
                 isAsleep = false;
+                Serial.println("irrigation:0");
                 this->servo->setPosition(0);
                 this->setActive(false);
             }

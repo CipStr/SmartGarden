@@ -4,7 +4,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 var temp = 0;
 var light = 8;
-
+var irrigationStatus = 0;
 // Create a new instance of express
 const app = express()
 
@@ -16,7 +16,7 @@ app.use(express.json());
 
 //create / route
 app.get('/', (req, res) => {
-  res.send("Temperature: " + temp + " Light: " + light);
+  res.send("Irrigation: "+irrigationStatus+ " Temperature: " + temp + " Light: " + light);
 });
 
 // Access the parse results as request.body
@@ -50,7 +50,11 @@ port.on('open', function () {
     console.log('open');
 });
 parser.on('data', function (data) {
-    console.log('Yo shorty its your birthday:',data);
+    console.log('Data:',data);
+    if(data.includes('irrigation')){
+        irrigationStatus = data.split(':')[1];
+        console.log("Irrigation: "+irrigationStatus);
+    }
 });
 // send data to serial line
 function sendData(){
@@ -58,7 +62,6 @@ function sendData(){
         if (err) {
             return console.log('Error on write: ', err.message);
         }
-        console.log('message written');
     });
 }
 

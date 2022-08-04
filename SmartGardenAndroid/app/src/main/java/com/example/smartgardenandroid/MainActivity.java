@@ -18,13 +18,33 @@ public class MainActivity extends AppCompatActivity {
     private TextView led4level;
     private Button led4plusButton;
     private Button led4minusButton;
+    private Button irrigationMinusButton;
+    private Button irrigationPlusButton;
+    private TextView irrigationLevel;
+    private boolean led1status = false;
+    private boolean led2status = false;
+    private boolean irrigationStatus = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         led3plusButton=findViewById(R.id.led3plusbutton);
         led3level=findViewById(R.id.led3level);
         led4level=findViewById(R.id.led4level);
+        led3minusButton = findViewById(R.id.led3minusbutton);
+        led4plusButton=findViewById(R.id.led4plusbutton);
+        led4minusButton = findViewById(R.id.led4minusbutton);
+        irrigationButton = findViewById(R.id.irrigationbutton);
+        led1button = findViewById(R.id.led1button);
+        led2button = findViewById(R.id.led2button);
+        irrigationMinusButton = findViewById(R.id.irrigationminusbutton);
+        irrigationPlusButton = findViewById(R.id.irrigationlevelplus);
+        irrigationLevel = findViewById(R.id.irrigationlevel);
+        setupButtons();
+    }
+
+    private void setupButtons() {
         led3plusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -32,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
                 led3level.setText(String.valueOf(level));
             }
         });
-        led3minusButton = findViewById(R.id.led3minusbutton);
         led3minusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        led4plusButton=findViewById(R.id.led4plusbutton);
-        led4minusButton = findViewById(R.id.led4minusbutton);
         led4plusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,9 +79,61 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        led1button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(led1status) {
+                    led1status = false;
+                    led1button.setText("ON");
+                } else {
+                    led1status = true;
+                    led1button.setText("OFF");
+                }
+            }
+        });
+        led2button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(led2status) {
+                    led2status = false;
+                    led2button.setText("ON");
+                } else {
+                    led2status = true;
+                    led2button.setText("OFF");
+                }
+            }
+        });
+        irrigationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(irrigationStatus) {
+                    irrigationStatus = false;
+                    irrigationButton.setText("OPEN");
+                } else {
+                    irrigationStatus = true;
+                    irrigationButton.setText("CLOSE");
+                }
+            }
+        });
+        irrigationMinusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int level = Integer.parseInt((irrigationLevel.getText().toString()));
+                if(level > 0) {
+                    level--;
+                    irrigationLevel.setText(String.valueOf(level));
+                }
+            }
+        });
+        irrigationPlusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int level = Integer.parseInt((irrigationLevel.getText().toString()));
+                level++;
+                irrigationLevel.setText(String.valueOf(level));
+            }
+        });
     }
-
-
 
 
 }

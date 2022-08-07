@@ -2,12 +2,23 @@ package com.example.smartgardenandroid;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+
+    private String deviceName = null;
+    private String deviceAddress;
+    public static Handler handler;
+    public static BluetoothSocket mmSocket;
+
+    private final static int CONNECTING_STATUS = 1; // used in bluetooth handler to identify message status
+    private final static int MESSAGE_READ = 2; // used in bluetooth handler to identify message update
+
 
     private Button irrigationButton;
     private Button led1button;

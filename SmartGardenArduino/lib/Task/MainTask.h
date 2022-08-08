@@ -21,6 +21,8 @@ class MainTask: public Task {
     void addIrrigationTask(IrrigationTask* irrigationtask);
     void readData();
     void getTemperature();
+    void writeManual(int c);
+    void setManual();
     void goManuel();
 
   private:

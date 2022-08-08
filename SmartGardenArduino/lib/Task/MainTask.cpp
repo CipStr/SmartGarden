@@ -13,6 +13,8 @@
 #define delta 9
 SoftwareSerial btChannel(2, 3);
 IrrigationTask* taskIrrigation;
+int manualValues[] = {0,0,0,0,0,0};
+int manualPosition = 0;
 
 MainTask::MainTask(){    
   
@@ -44,15 +46,28 @@ void MainTask::tick(){
         case AUTO:
             if(btChannel.available()){
                  int c = btChannel.read();
-                 Serial.write(c);
                  if(c == 77){
+                    Serial.println("Going manual");
+                    btChannel.flush();
                     goManuel();
                  }
             }
             readData();
         break;
         case MANUAL:
-            Serial.println("SOY MANUEL");
+            //Parse each byte of the message
+            int c = btChannel.read();
+            //Serial.println(c);
+            if(c >=+ 48){
+                writeManual(c);
+                for(int i = 0; i < 6; i++){
+                    
+                        Serial.print(manualValues[i]);
+                        Serial.print(" ");
+                    
+                }
+            }
+            
         break;
   }
 }
@@ -100,4 +115,39 @@ void MainTask::readData(){
 }
 void MainTask::goManuel(){
     state = MANUAL;
+}
+void MainTask::writeManual(int c){
+    if(manualPosition>5){
+        manualPosition = 0;
+        
+    }
+    manualValues[manualPosition] = c;
+    manualPosition++;
+    if(manualPosition == 6){
+        setManual();
+    }
+}
+
+void MainTask::setManual(){
+    if(manualValues[0] == 49){
+        digitalWrite(pinLed1, HIGH);
+    }
+    else{
+        digitalWrite(pinLed1, LOW);
+    }
+    if(manualValues[1] == 49){
+        digitalWrite(pinLed2, HIGH);
+    }
+    else{
+        digitalWrite(pinLed2, LOW);
+    }
+    int c = manualValues[2]-48;
+    analogWrite(pinLed3, map(c,0,5,255,0));
+    c= manualValues[3]-48;
+    analogWrite(pinLed4, map(c,0,5,255,0));
+    if(manualValues[4] == 49){
+        if(!taskIrrigation->getIsAsleep()){
+            taskIrrigation->resetState(manualValues[5]-48);
+        }
+    }
 }

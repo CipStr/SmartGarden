@@ -3,18 +3,17 @@ package com.example.smartgardenandroid;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-<<<<<<< HEAD
+
 import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.os.Handler;
-=======
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
->>>>>>> 047c2eaacd3e90c2ff46ad79e0b2386584090f06
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -31,7 +30,6 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
-<<<<<<< HEAD
     private String deviceName = null;
     private String deviceAddress;
     public static Handler handler;
@@ -40,11 +38,9 @@ public class MainActivity extends AppCompatActivity {
     private final static int CONNECTING_STATUS = 1; // used in bluetooth handler to identify message status
     private final static int MESSAGE_READ = 2; // used in bluetooth handler to identify message update
 
-=======
+
     BluetoothAdapter mBluetoothAdapter = null;
-    BluetoothSocket mmSocket = null;
     BluetoothDevice mmDevice = null;
->>>>>>> 047c2eaacd3e90c2ff46ad79e0b2386584090f06
 
     private Button irrigationButton;
     private ToggleButton tgb;

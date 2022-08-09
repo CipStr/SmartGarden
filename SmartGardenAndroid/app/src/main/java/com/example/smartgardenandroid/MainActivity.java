@@ -5,6 +5,7 @@ import androidx.core.app.ActivityCompat;
 
 
 import android.bluetooth.BluetoothSocket;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean led2status = false;
     private boolean irrigationStatus = false;
     private Button manualButton;
+    private Button alarmButton;
     String TAG = "MainActivity";
     private static final int REQUEST_ENABLE_BT = 1;
     private static final UUID MY_UUID_INSECURE =
@@ -68,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     StringBuilder messages;
     private boolean enableUI = false;
     private CountDownTimer timer;
+    private boolean alarmStatus = false;
 
 
 
@@ -91,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         setContentView(R.layout.activity_main);
+        alarmButton = findViewById(R.id.alarm);
         manualButton = findViewById(R.id.manualbutton);
         tgb = findViewById(R.id.tgb);
         led3plusButton = findViewById(R.id.led3plusbutton);
@@ -105,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
         irrigationMinusButton = findViewById(R.id.irrigationminusbutton);
         irrigationPlusButton = findViewById(R.id.irrigationlevelplus);
         irrigationLevel = findViewById(R.id.irrigationlevel);
+        alarmButton.setClickable(false);
+        alarmButton.setEnabled(false);
         manualButton.setClickable(false);
         manualButton.setEnabled(false);
         led1button.setClickable(false);
@@ -131,6 +137,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void enableButtons(){
         if(enableUI) {
+            alarmButton.setClickable(true);
+            alarmButton.setEnabled(true);
             manualButton.setClickable(true);
             manualButton.setEnabled(true);
             led1button.setClickable(true);
@@ -261,6 +269,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 SendManualMessage();
+            }
+        });
+        alarmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SendAlarmMessage();
             }
         });
     }
@@ -419,7 +433,8 @@ public class MainActivity extends AppCompatActivity {
 
                         @Override
                         public void run() {
-                            view_data.setText(incomingMessage);
+                            alarmButton.setBackgroundColor(Color.RED);
+                            alarmStatus = true;
                         }
                     });
 
@@ -430,7 +445,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-
 
         public void write(byte[] bytes) {
             String text = new String(bytes, Charset.defaultCharset());
@@ -448,6 +462,16 @@ public class MainActivity extends AppCompatActivity {
                 mmSocket.close();
             } catch (IOException e) {
             }
+        }
+    }
+
+    private void SendAlarmMessage(){
+        //only if alarmStatus is true
+        if(alarmStatus) {
+            String message = "K";
+            byte[] msgBuffer = message.getBytes();
+            mConnectedThread.write(msgBuffer);
+            alarmButton.setBackgroundColor(Color.GREEN);
         }
     }
 

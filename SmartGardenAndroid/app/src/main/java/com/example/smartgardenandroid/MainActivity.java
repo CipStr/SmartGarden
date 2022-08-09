@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 
 import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -13,6 +14,7 @@ import android.bluetooth.BluetoothServerSocket;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 
 import android.view.View;
@@ -64,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
     EditText send_data;
     TextView view_data;
     StringBuilder messages;
+    private boolean enableUI = false;
+    private CountDownTimer timer;
+
+
 
     @SuppressLint("MissingPermission")
     @Override
@@ -99,7 +105,53 @@ public class MainActivity extends AppCompatActivity {
         irrigationMinusButton = findViewById(R.id.irrigationminusbutton);
         irrigationPlusButton = findViewById(R.id.irrigationlevelplus);
         irrigationLevel = findViewById(R.id.irrigationlevel);
+        manualButton.setClickable(false);
+        manualButton.setEnabled(false);
+        led1button.setClickable(false);
+        led1button.setEnabled(false);
+        led2button.setClickable(false);
+        led2button.setEnabled(false);
+        led3plusButton.setClickable(false);
+        led3plusButton.setEnabled(false);
+        led3minusButton.setClickable(false);
+        led3minusButton.setEnabled(false);
+        led4plusButton.setClickable(false);
+        led4plusButton.setEnabled(false);
+        led4minusButton.setClickable(false);
+        led4minusButton.setEnabled(false);
+        irrigationButton.setClickable(false);
+        irrigationButton.setEnabled(false);
+        irrigationMinusButton.setClickable(false);
+        irrigationMinusButton.setEnabled(false);
+        irrigationPlusButton.setClickable(false);
+        irrigationPlusButton.setEnabled(false);
+        Start_Server();
         setupButtons();
+    }
+
+    private void enableButtons(){
+        if(enableUI) {
+            manualButton.setClickable(true);
+            manualButton.setEnabled(true);
+            led1button.setClickable(true);
+            led1button.setEnabled(true);
+            led2button.setClickable(true);
+            led2button.setEnabled(true);
+            led3plusButton.setClickable(true);
+            led3plusButton.setEnabled(true);
+            led3minusButton.setClickable(true);
+            led3minusButton.setEnabled(true);
+            led4plusButton.setClickable(true);
+            led4plusButton.setEnabled(true);
+            led4minusButton.setClickable(true);
+            led4minusButton.setEnabled(true);
+            irrigationButton.setClickable(true);
+            irrigationButton.setEnabled(true);
+            irrigationMinusButton.setClickable(true);
+            irrigationMinusButton.setEnabled(true);
+            irrigationPlusButton.setClickable(true);
+            irrigationPlusButton.setEnabled(true);
+        }
     }
 
     private void setupButtons() {
@@ -238,9 +290,25 @@ public class MainActivity extends AppCompatActivity {
             //mmSocket.connect();
             ConnectThread connect = new ConnectThread(mmDevice, mmDevice.getUuids()[0].getUuid());
             connect.start();
-            //if connection is successful make toast message
-            Toast.makeText(getApplicationContext(), "Connected to arduinoGarden", Toast.LENGTH_SHORT).show();
+
         }
+        timer = new CountDownTimer(10000, 20) {
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+                // log every 20th second
+                Log.i(TAG, "onTick: " + millisUntilFinished);
+            }
+
+            @Override
+            public void onFinish() {
+                try{
+                    enableButtons();
+                }catch(Exception e){
+                    Log.e("Error", "Error: " + e.toString());
+                }
+            }
+        }.start();
     }
 
     private class ConnectThread extends Thread {
@@ -320,6 +388,7 @@ public class MainActivity extends AppCompatActivity {
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
+            enableUI=true;
 
 
             try {
@@ -422,7 +491,7 @@ public class MainActivity extends AppCompatActivity {
         mConnectedThread.write(bytes);
     }
 
-    public void Start_Server(View view) {
+    public void Start_Server() {
 
         AcceptThread accept = new AcceptThread();
         accept.start();

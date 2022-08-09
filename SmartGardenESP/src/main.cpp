@@ -5,7 +5,7 @@
 #include <WiFiClient.h>
 TemperatureSensor* temperatureSensor;
 Photoresistor* photoresistor;
-const char *serviceURI = "http://192.168.1.66:12345/";
+const char *serviceURI = "http://192.168.1.61:12345/";
 int pinLed = 17;
 const char* ssid = "StricescuFamily";
 const char* password = "bulanelciupitu";
@@ -67,7 +67,7 @@ void setup() {
 void loop() {
   int light = photoresistor->getValue();
   float temp = temperatureSensor->getTemperature();
-  if(temp==40 && irrigationStatus==1){
+  if(temp>=40 && irrigationStatus==1){
     digitalWrite(pinLed, LOW);
   }
   else{

@@ -61,7 +61,13 @@ void MainTask::tick(){
             //Parse each byte of the message
             int c = btChannel.read();
             //Serial.println(c);
-            if(c >= 48){
+            if( c == 66){
+                Serial.println("Going auto");
+                btChannel.flush();
+                Serial.read();
+                state=AUTO;  
+            }
+            if(c >= 48 && c <= 57){
                 writeManual(c);
                 for(int i = 0; i < 6; i++){
                     
@@ -70,11 +76,7 @@ void MainTask::tick(){
                     
                 }
             }   
-            if( c == 66){
-                Serial.println("Going auto");
-                btChannel.flush();
-                state=AUTO;  
-            }
+            
             break;
         }
         case ALARM:

@@ -44,6 +44,7 @@ void MainTask::addIrrigationTask(IrrigationTask* irrigationtask){
 void MainTask::tick(){
     switch(state){
         case AUTO:
+        {
             if(btChannel.available()){
                  int c = btChannel.read();
                  if(c == 77){
@@ -53,12 +54,14 @@ void MainTask::tick(){
                  }
             }
             readData();
-        break;
+            break;
+        }
         case MANUAL:
+        {
             //Parse each byte of the message
             int c = btChannel.read();
             //Serial.println(c);
-            if(c >=+ 48){
+            if(c >= 48){
                 writeManual(c);
                 for(int i = 0; i < 6; i++){
                     
@@ -66,8 +69,21 @@ void MainTask::tick(){
                         Serial.print(" ");
                     
                 }
+            }   
+            if( c == 66){
+                Serial.println("Going auto");
+                btChannel.flush();
+                state=AUTO;  
             }
-            
+            break;
+        }
+        case ALARM:
+            int r = btChannel.read();
+            if(r == 75){
+                Serial.println("ALARM OFF");
+                btChannel.flush();
+                state = AUTO;
+            }
         break;
   }
 }
@@ -85,6 +101,12 @@ void MainTask::readData(){
         temperature = temp.toFloat();
         //map temperature in a range between 0 and 4
         temperature = map(temperature,0,40,0,4);
+        if(temperature >= 4 && taskIrrigation->getIsAsleep()){
+            state = ALARM;
+            Serial.println("ALARM ON");
+            btChannel.write(65);
+        }
+        else{
         Serial.println(temperature);
         int secondIndex = msg.indexOf(':');
         String light = msg.substring(index+1,secondIndex);
@@ -108,6 +130,8 @@ void MainTask::readData(){
             analogWrite(pinLed4, 0);
         }
         timer.startTimer();
+        }
+       
     } 
     else{
         Serial.read();

@@ -5,11 +5,12 @@
 #include <WiFiClient.h>
 TemperatureSensor* temperatureSensor;
 Photoresistor* photoresistor;
-const char *serviceURI = "http://192.168.1.66:12345/";
+const char *serviceURI = "http://192.168.1.61:12345/";
 int pinLed = 17;
 const char* ssid = "StricescuFamily";
 const char* password = "bulanelciupitu";
 int irrigationStatus = 0;
+int alarmStatus = 0;
 
 void connectToWifi(const char* ssid, const char* password){
   WiFi.begin(ssid, password);
@@ -49,6 +50,11 @@ int getData(){
     else{
         irrigationStatus = 0;
     }
+    // if payload contains Alarm: 0, then set alarmStatus to 1
+    if(payload.indexOf("Alarm: 0") != -1){
+        alarmStatus = 0;
+    }
+    
    Serial.println(payload);
    Serial.println(irrigationStatus);  
    http.end();
@@ -67,14 +73,19 @@ void setup() {
 void loop() {
   int light = photoresistor->getValue();
   float temp = temperatureSensor->getTemperature();
-  if(temp==40 && irrigationStatus==1){
+  if(temp>=40 && irrigationStatus==1 && alarmStatus==0){
     digitalWrite(pinLed, LOW);
+    sendData(serviceURI, 999, 999);
+    alarmStatus = 1;
   }
   else{
-    digitalWrite(pinLed, HIGH);
-  }
-  if (WiFi.status()== WL_CONNECTED){ 
-    sendData(serviceURI,temp,light);
+    if(alarmStatus==0){
+      digitalWrite(pinLed, HIGH);
+      if (WiFi.status()== WL_CONNECTED){ 
+        sendData(serviceURI,temp,light);
+        getData();
+      }
+    }
     getData();
   }
 }

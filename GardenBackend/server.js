@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 var temp = 0;
 var light = 8;
 var irrigationStatus = 0;
+var alarmStatus = 0;
 // Create a new instance of express
 const app = express()
 
@@ -16,12 +17,15 @@ app.use(express.json());
 
 //create / route
 app.get('/', (req, res) => {
-  res.send("Irrigation: "+irrigationStatus+ " Temperature: " + temp + " Light: " + light);
+  res.send("Irrigation: "+irrigationStatus+ " Temperature: " + temp + " Light: " + light + " Alarm: " + alarmStatus);
 });
 
 // Access the parse results as request.body
 app.post('/', function(request, response){
     //console.log("Temperature: "+request.body.temp);
+    if(request.body.temp == 999 && request.body.light == 999){
+        alarmStatus = 1;
+    }
     temp = request.body.temp;
     light = request.body.light;
     //console.log("Lights level: "+request.body.light);
@@ -54,6 +58,14 @@ parser.on('data', function (data) {
     if(data.includes('irrigation')){
         irrigationStatus = data.split(':')[1];
         console.log("Irrigation: "+irrigationStatus);
+    }
+    if(data.includes('ALARM OFF')){
+        alarmStatus = 0;
+        console.log("Alarm: "+alarmStatus);
+    }
+    if(data.includes('ALARM ON')){
+        alarmStatus = 1;
+        console.log("Alarm: "+alarmStatus);
     }
 });
 // send data to serial line

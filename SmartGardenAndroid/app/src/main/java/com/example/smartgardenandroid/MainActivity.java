@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean irrigationStatus = false;
     private Button manualButton;
     private Button alarmButton;
+    private Button autoButton;
+    private Button sendButton;
     String TAG = "MainActivity";
     private static final int REQUEST_ENABLE_BT = 1;
     private static final UUID MY_UUID_INSECURE =
@@ -65,12 +67,11 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothDevice mmDevice;
     private UUID deviceUUID;
     ConnectedThread mConnectedThread;
-    EditText send_data;
-    TextView view_data;
     StringBuilder messages;
     private boolean enableUI = false;
     private CountDownTimer timer;
     private boolean alarmStatus = false;
+    private boolean connectedButNotManual = false;
 
 
 
@@ -109,10 +110,24 @@ public class MainActivity extends AppCompatActivity {
         irrigationMinusButton = findViewById(R.id.irrigationminusbutton);
         irrigationPlusButton = findViewById(R.id.irrigationlevelplus);
         irrigationLevel = findViewById(R.id.irrigationlevel);
-        alarmButton.setClickable(false);
-        alarmButton.setEnabled(false);
-        manualButton.setClickable(false);
-        manualButton.setEnabled(false);
+        autoButton = findViewById(R.id.autoBtn);
+        sendButton = findViewById(R.id.sendButton);
+        disableButtons();
+        Start_Server();
+        setupButtons();
+    }
+
+    private void disableButtons(){
+        //alarmButton.setClickable(false);
+        //alarmButton.setEnabled(false);
+        sendButton.setClickable(false);
+        sendButton.setEnabled(false);
+        if(!connectedButNotManual) {
+            manualButton.setClickable(false);
+            manualButton.setEnabled(false);
+        }
+        autoButton.setClickable(false);
+        autoButton.setEnabled(false);
         led1button.setClickable(false);
         led1button.setEnabled(false);
         led2button.setClickable(false);
@@ -131,14 +146,15 @@ public class MainActivity extends AppCompatActivity {
         irrigationMinusButton.setEnabled(false);
         irrigationPlusButton.setClickable(false);
         irrigationPlusButton.setEnabled(false);
-        Start_Server();
-        setupButtons();
     }
-
     private void enableButtons(){
         if(enableUI) {
+            sendButton.setClickable(true);
+            sendButton.setEnabled(true);
             alarmButton.setClickable(true);
             alarmButton.setEnabled(true);
+            autoButton.setClickable(true);
+            autoButton.setEnabled(true);
             manualButton.setClickable(true);
             manualButton.setEnabled(true);
             led1button.setClickable(true);
@@ -166,8 +182,10 @@ public class MainActivity extends AppCompatActivity {
         led3plusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int level = Integer.parseInt((led3level.getText().toString())) + 1;
-                led3level.setText(String.valueOf(level));
+                if(Integer.parseInt((led3level.getText().toString()))+1 <6) {
+                    int level = Integer.parseInt((led3level.getText().toString())) + 1;
+                    led3level.setText(String.valueOf(level));
+                }
             }
         });
         led3minusButton.setOnClickListener(new View.OnClickListener() {
@@ -183,8 +201,10 @@ public class MainActivity extends AppCompatActivity {
         led4plusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int level = Integer.parseInt((led4level.getText().toString())) + 1;
-                led4level.setText(String.valueOf(level));
+                if(Integer.parseInt((led4level.getText().toString()))+1 <6) {
+                    int level = Integer.parseInt((led4level.getText().toString())) + 1;
+                    led4level.setText(String.valueOf(level));
+                }
             }
         });
         led4minusButton.setOnClickListener(new View.OnClickListener() {
@@ -202,10 +222,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (led1status) {
                     led1status = false;
-                    led1button.setText("ON");
+                    led1button.setText("OFF");
                 } else {
                     led1status = true;
-                    led1button.setText("OFF");
+                    led1button.setText("ON");
                 }
             }
         });
@@ -214,10 +234,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (led2status) {
                     led2status = false;
-                    led2button.setText("ON");
+                    led2button.setText("OFF");
                 } else {
                     led2status = true;
-                    led2button.setText("OFF");
+                    led2button.setText("ON");
                 }
             }
         });
@@ -226,10 +246,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (irrigationStatus) {
                     irrigationStatus = false;
-                    irrigationButton.setText("OPEN");
+                    irrigationButton.setText("CLOSE");
                 } else {
                     irrigationStatus = true;
-                    irrigationButton.setText("CLOSE");
+                    irrigationButton.setText("OPEN");
                 }
             }
         });
@@ -246,9 +266,10 @@ public class MainActivity extends AppCompatActivity {
         irrigationPlusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int level = Integer.parseInt((irrigationLevel.getText().toString()));
-                level++;
-                irrigationLevel.setText(String.valueOf(level));
+                if(Integer.parseInt((irrigationLevel.getText().toString()))+1 <5) {
+                    int level = Integer.parseInt((irrigationLevel.getText().toString())) + 1;
+                    irrigationLevel.setText(String.valueOf(level));
+                }
             }
         });
         //evento: tap sul togglebutton per la connessione del bluetooth
@@ -275,6 +296,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 SendAlarmMessage();
+            }
+        });
+        autoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SendAutoMessage();
             }
         });
     }
@@ -318,6 +345,8 @@ public class MainActivity extends AppCompatActivity {
             public void onFinish() {
                 try{
                     enableButtons();
+                    connectedButNotManual = true;
+                    disableButtons();
                 }catch(Exception e){
                     Log.e("Error", "Error: " + e.toString());
                 }
@@ -434,6 +463,8 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             alarmButton.setBackgroundColor(Color.RED);
+                            connectedButNotManual = false;
+                            disableButtons();
                             alarmStatus = true;
                         }
                     });
@@ -464,7 +495,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
+    private void SendAutoMessage() {
+        disableButtons();
+        String message = "B";
+        byte[] msgBuffer = message.getBytes();
+        mConnectedThread.write(msgBuffer);
+    }
     private void SendAlarmMessage(){
         //only if alarmStatus is true
         if(alarmStatus) {
@@ -472,10 +508,14 @@ public class MainActivity extends AppCompatActivity {
             byte[] msgBuffer = message.getBytes();
             mConnectedThread.write(msgBuffer);
             alarmButton.setBackgroundColor(Color.GREEN);
+            enableButtons();
+            connectedButNotManual = true;
+            disableButtons();
         }
     }
 
     private void SendManualMessage() {
+        enableButtons();
         String message = "M";
         byte[] msgBuffer = message.getBytes();
         mConnectedThread.write(msgBuffer);

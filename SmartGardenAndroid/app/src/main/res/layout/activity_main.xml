@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/sendButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="22dp"
@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="16dp"
         android:text="-"
         app:layout_constraintStart_toStartOf="@+id/textviewIrrigation"
         app:layout_constraintTop_toBottomOf="@+id/textviewIrrigation" />
@@ -34,9 +34,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="51dp"
         android:layout_marginTop="64dp"
-        android:layout_marginEnd="51dp"
+        android:layout_marginEnd="48dp"
         android:text="Light System"
-        app:layout_constraintEnd_toStartOf="@+id/led3minusbutton"
+        app:layout_constraintEnd_toStartOf="@+id/led3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -74,10 +74,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="159dp"
+        android:layout_marginTop="96dp"
+        android:layout_marginBottom="96dp"
         android:text="-"
+        app:layout_constraintBottom_toTopOf="@+id/led2button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/textviewLight" />
 
     <Button
         android:id="@+id/led3plusbutton"
@@ -93,30 +95,30 @@
         android:id="@+id/led2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="19dp"
         android:layout_marginEnd="25dp"
+        android:layout_marginBottom="18dp"
         android:text="Led 2"
-        app:layout_constraintEnd_toEndOf="@+id/led1button"
-        app:layout_constraintTop_toBottomOf="@+id/led1button" />
+        app:layout_constraintBottom_toTopOf="@+id/led2button"
+        app:layout_constraintEnd_toEndOf="@+id/led2button" />
 
     <Button
         android:id="@+id/led2button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="21dp"
+        android:layout_marginBottom="53dp"
         android:text="-"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/led2" />
+        app:layout_constraintBottom_toTopOf="@+id/textviewIrrigation"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/led4plusbutton"
         android:layout_width="51dp"
         android:layout_height="0dp"
-        android:layout_marginEnd="50dp"
         android:text="+"
         app:layout_constraintBottom_toBottomOf="@+id/led3plusbutton"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/led4level"
+        app:layout_constraintStart_toEndOf="@+id/led4level"
         app:layout_constraintTop_toTopOf="@+id/led3plusbutton" />
 
     <TextView
@@ -133,41 +135,37 @@
         android:id="@+id/led4level"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="21dp"
+        android:layout_marginStart="62dp"
         android:layout_marginTop="15dp"
         android:text="0"
-        app:layout_constraintStart_toStartOf="@+id/led4plusbutton"
+        app:layout_constraintStart_toEndOf="@+id/led3plusbutton"
         app:layout_constraintTop_toBottomOf="@+id/led4plusbutton" />
 
     <Button
         android:id="@+id/led3minusbutton"
         android:layout_width="50dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="111dp"
-        android:layout_marginBottom="111dp"
+        android:layout_height="0dp"
         android:text="-"
-        app:layout_constraintBottom_toTopOf="@+id/irrigationminusbutton"
-        app:layout_constraintEnd_toEndOf="@+id/led3level"
-        app:layout_constraintStart_toEndOf="@+id/led3level"
-        app:layout_constraintTop_toTopOf="@+id/led3plusbutton" />
+        app:layout_constraintBottom_toBottomOf="@+id/led2button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/led2button" />
 
     <Button
         android:id="@+id/led4minusbutton"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="1dp"
+        android:layout_height="48dp"
         android:text="-"
-        app:layout_constraintBottom_toBottomOf="@+id/led3minusbutton"
+        app:layout_constraintBaseline_toBaselineOf="@+id/led3minusbutton"
         app:layout_constraintEnd_toEndOf="@+id/led4plusbutton"
-        app:layout_constraintStart_toStartOf="@+id/irrigationlevelplus"
-        app:layout_constraintTop_toTopOf="@+id/led3minusbutton" />
+        app:layout_constraintStart_toStartOf="@+id/led4plusbutton" />
 
     <TextView
         android:id="@+id/textviewIrrigation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginBottom="6dp"
+        android:layout_marginBottom="16dp"
         android:text="Irrigation System"
         app:layout_constraintBottom_toTopOf="@+id/irrigationminusbutton"
         app:layout_constraintStart_toStartOf="parent" />
@@ -176,22 +174,22 @@
         android:id="@+id/irrigationminusbutton"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginStart="134dp"
-        android:layout_marginEnd="134dp"
+        android:layout_marginStart="129dp"
+        android:layout_marginEnd="129dp"
         android:text="-"
         app:layout_constraintBaseline_toBaselineOf="@+id/irrigationlevel"
-        app:layout_constraintEnd_toEndOf="@+id/led4plusbutton"
-        app:layout_constraintStart_toStartOf="@+id/irrigationbutton" />
+        app:layout_constraintEnd_toEndOf="@+id/irrigationlevelplus"
+        app:layout_constraintStart_toStartOf="@+id/textviewLight" />
 
     <TextView
         android:id="@+id/irrigationlevel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="42dp"
-        android:layout_marginBottom="65dp"
+        android:layout_marginBottom="54dp"
         android:text="0"
         app:layout_constraintBottom_toTopOf="@+id/manualbutton"
-        app:layout_constraintStart_toEndOf="@+id/irrigationminusbutton" />
+        app:layout_constraintEnd_toStartOf="@+id/led4minusbutton"
+        app:layout_constraintStart_toStartOf="@+id/alarm" />
 
     <Button
         android:id="@+id/irrigationlevelplus"
@@ -201,7 +199,7 @@
         android:layout_marginEnd="32dp"
         android:text="+"
         app:layout_constraintBaseline_toBaselineOf="@+id/irrigationlevel"
-        app:layout_constraintEnd_toEndOf="@+id/button"
+        app:layout_constraintEnd_toEndOf="@+id/sendButton"
         app:layout_constraintStart_toEndOf="@+id/irrigationlevel" />
 
     <Button
@@ -210,7 +208,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="14dp"
         android:text="Require Manual Control"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintBottom_toTopOf="@+id/sendButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -220,17 +218,27 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="31dp"
         android:text="alarm"
-        app:layout_constraintEnd_toEndOf="@+id/irrigationlevelplus"
-        app:layout_constraintStart_toStartOf="@+id/irrigationlevel"
+        app:layout_constraintEnd_toEndOf="@+id/led4"
+        app:layout_constraintStart_toEndOf="@+id/led4"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ToggleButton
         android:id="@+id/tgb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="34dp"
         android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/autoBtn" />
+
+    <Button
+        android:id="@+id/autoBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="Go auto"
+        app:layout_constraintEnd_toStartOf="@+id/manualbutton"
+        app:layout_constraintStart_toStartOf="@+id/manualbutton"
+        app:layout_constraintTop_toBottomOf="@+id/manualbutton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
